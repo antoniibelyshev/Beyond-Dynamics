@@ -1,15 +1,21 @@
-# ICLR Supplementary materials
+# Beyond-Dynamics
 
-## Data sampling details
+## Abstract
 
-In the oscillating Turing patterns we generated 200 trajectories with 400 points in each trajectory. For other experiments we generated 200 trajectories with 1000 points in each trajectory.
+The discovery of conservation principles is crucial for understanding the underlying behavior of physical systems and has applications across various domains. In this paper, we propose a novel method that combines representation learning and topological analysis to uncover the topology of conservation law spaces. Our approach is robust, as it does not rely on expert-selected values of hyperparameters, making it accessible to researchers from different disciplines. We demonstrate the method's effectiveness on a set of physical simulations, showcasing its potential for uncovering previously unknown conservation principles and fostering interdisciplinary research. Ultimately, this work emphasizes the power of data-driven techniques in advancing our understanding of fundamental principles governing physical systems and beyond.
 
-To simulate a noise in measurments, we modified the noiseless harmonic oscillator measurments by adding to each point a random normal noise with zero mean and variance equal to the variance along the corresponding coordinate multiplied by the strength of the noise, in our case equal to 0.01.
+## Methods
 
-For the quantum harmonic poscillator we considered the following experimental setup for getting the data for our algorithm. Experiment starts with the wavefunction being a gaussian with the mean equal to some $x_0$ and variance equal to $1 / \sqrt{2}$, then the wavefunction evolves for some time $t$, and at last we make a measurment of either position or momentum, which is just getting a sample from a probability distribution $\rho(y) = |\psi(y, t)|^2$, where $y$ is either $x$ or $p$ depending on what we are currently measuring. After one measurment is done we have to restart the experiment because the measurment of the quantum system can change its state. In order to measure the whole trajectory, we have to repeat the experiment with the same initial conditions as many times as many measurments we want to be made. The process repeats with the different $x_0$ sampled randomly in the interval [0, 5]. To make this setup more realistic, we add some error in the initial condition for each new experiment: both mean and variance of the gaussian are normally distributed with means $x_0$ and 1 respectively and with variances equal to 0.1.
+### Data
 
-## Running the code
+In our work we learn to determine the number of conserved quantities in dynamical system using the data from trajectories of this system. For a given model we consider a dataset of $N$ trajectories, where each trajectory is represented by $M$ points in the phase space. Initial conditions for the trajectories are drawn randomly from the phase space. Our algorithm only works under the assumption that the time of sampling is sufficiently large, such that any two trajectories with equal conserved quantities will draw from a single distribution which depend only on the values of the conserved quantities and not on the specific initial condition. The property of the system to have such sufficiently large time is called ergodicyty, so we consider only ergodic systems.
 
-To generate the trajectories you can run the script generate_trajectories.py in the folder data.
+### Algorithm
 
-After that you can run the experiments from the paper using the corresponding notebooks in the supplementary materials.
+We start the algorithm with normalizing the data to have the zero mean and unit variance along each individual coordinate of the phase space. To the resulting rescaled trajectories we apply the Wasserstein distance to compute pairwise distances between trajectories. These pairwise distances approximate the metric sctructure of the manifold $\mathcal{C}$ consisting of all possible trajectories of the system. Then we construct a series of manifold approximations for in various dimensionalities. The minimal dimension where the approximations *is good*, corresponds to the dimensionality of the manifold $\mathcal{C}$. Since, $\mathcal{C}$ can be parametrised by the values of conserved quantities, so its dimensionality equals to the number of conserved quantities. Therefore, our algorithm is able to find the number of conserved quantities in the system.
+
+## How to run the code
+
+All nessecary packages can be installed by running "pip install -r requirements.txt" in the terminal.
+For our experiments we use simulated data. The scripts for the data generation are in the ./data.
+The experiments are shown in the respective notebooks.
