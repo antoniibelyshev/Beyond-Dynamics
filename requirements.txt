@@ -1,0 +1,14 @@
+tqdm
+wasserstein
+numpy
+pandas
+matplotlib
+scipy
+scikit-learn
+torch
+pytorch-lightning==1.6.4
+ipython
+ipywidgets==7.7.2
+wandb
+ffmpeg
+pytorch-metric-learning
