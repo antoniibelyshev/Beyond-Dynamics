@@ -1,21 +1,27 @@
-# Beyond-Dynamics
+# ICLR Supplementary materials
 
-## Abstract
+## Data sampling details
 
-The discovery of conservation principles is crucial for understanding the underlying behavior of physical systems and has applications across various domains. In this paper, we propose a novel method that combines representation learning and topological analysis to uncover the topology of conservation law spaces. Our approach is robust, as it does not rely on expert-selected values of hyperparameters, making it accessible to researchers from different disciplines. We demonstrate the method's effectiveness on a set of physical simulations, showcasing its potential for uncovering previously unknown conservation principles and fostering interdisciplinary research. Ultimately, this work emphasizes the power of data-driven techniques in advancing our understanding of fundamental principles governing physical systems and beyond.
+In the oscillating Turing patterns we generated 200 trajectories with 400 points in each trajectory. For other experiments we generated 200 trajectories with 1000 points in each trajectory.
 
-## Methods
+To simulate a noise in measurments, we modified the noiseless harmonic oscillator measurments by adding to each point a random normal noise with zero mean and variance equal to the variance along the corresponding coordinate multiplied by the strength of the noise, in our case equal to 0.01.
 
-### Data
+For the quantum harmonic poscillator we considered the following experimental setup for getting the data for our algorithm. Experiment starts with the wavefunction being a gaussian with the mean equal to some $x_0$ and variance equal to $1 / \sqrt{2}$, then the wavefunction evolves for some time $t$, and at last we make a measurment of either position or momentum, which is just getting a sample from a probability distribution $\rho(y) = |\psi(y, t)|^2$, where $y$ is either $x$ or $p$ depending on what we are currently measuring. After one measurment is done we have to restart the experiment because the measurment of the quantum system can change its state. In order to measure the whole trajectory, we have to repeat the experiment with the same initial conditions as many times as many measurments we want to be made. The process repeats with the different $x_0$ sampled randomly in the interval [0, 5]. To make this setup more realistic, we add some error in the initial condition for each new experiment: both mean and variance of the gaussian are normally distributed with means $x_0$ and 1 respectively and with variances equal to 0.1.
 
-In our work we learn to determine the number of conserved quantities in dynamical system using the data from trajectories of this system. For a given model we consider a dataset of $N$ trajectories, where each trajectory is represented by $M$ points in the phase space. Initial conditions for the trajectories are drawn randomly from the phase space. Our algorithm only works under the assumption that the time of sampling is sufficiently large, such that any two trajectories with equal conserved quantities will draw from a single distribution which depend only on the values of the conserved quantities and not on the specific initial condition. The property of the system to have such sufficiently large time is called ergodicyty, so we consider only ergodic systems.
+## Running the code
 
-### Algorithm
+To generate the trajectories you can run the script generate_data.py in the folder data.
 
-We start the algorithm with normalizing the data to have the zero mean and unit variance along each individual coordinate of the phase space. To the resulting rescaled trajectories we apply the Wasserstein distance to compute pairwise distances between trajectories. These pairwise distances approximate the metric sctructure of the manifold $\mathcal{C}$ consisting of all possible trajectories of the system. Then we construct a series of manifold approximations for in various dimensionalities. The minimal dimension where the approximations *is good*, corresponds to the dimensionality of the manifold $\mathcal{C}$. Since, $\mathcal{C}$ can be parametrised by the values of conserved quantities, so its dimensionality equals to the number of conserved quantities. Therefore, our algorithm is able to find the number of conserved quantities in the system.
+After that you can run the experiments from the paper using the corresponding notebooks in the supplementary materials.
 
-## How to run the code
+## Additional experiments
 
-All nessecary packages can be installed by running "pip install -r requirements.txt" in the terminal.
-For our experiments we use simulated data. The scripts for the data generation are in the ./data.
-The experiments are shown in the respective notebooks.
+In addition to the experiments presented in the paper we performed two additional experiments, to show how our algorithm works with various levels of noise and how it works with the data where one of the conserved quantities is almost the same for all trajectories in the input data.
+
+### Coupled oscillator with various levels of noise
+
+We tested our algorithm on the coupled oscillator introducing various levels of noise into the normalized data (that corresponds to the unnirmalized data with noise scaled by the standard deviation of the particular coordinate in the data). You can find the results of the experiment in the file "msap_coupled_oscillator_noise.ipynb". On the resulting graph we see that our algorithm distinguishes the 2-dimensional embedding from the 1-dimensional embedding up to the noise std equal to 0.5, however, the distinction becomes less obvious as the noise grows.
+
+### Coupled oscillator with small variation in $E_2$
+
+In this experiment we sample the initial points for the trajectories such that the $E_1$ varies from 0.2 to 2.0 and $E_2$ varies from 1.0 to 1.1 (variation in $E_2$ is much smaller than variation in $E_1$). We run our algorithm on such data. The results of the experiment are shown in the notebook "msap_coupled_oscillator_fixed_E2.ipynb". Our algorithm showed that there is one conserved quantity in the system instead of the actual two conserved quantities, because the input data did not represent the space of conserved quantities, the shape space $\mathcal{C}$, well. Also, latent representations have learnt the $E_1$ and have not learnt $E_2$, because there is almost no usefull information about the structure of $E_2$.
