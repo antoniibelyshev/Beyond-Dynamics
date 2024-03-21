@@ -8,4 +8,4 @@ The discovery of conservation principles is crucial for understanding the fundam
 
 This repository contains the code of the Metric Space Approximation and Projection model and numerical experiments showcasing the capability of the method on a few dynamical systems.
 
-Scripts generating the data can be found in ./data folder. The experiments are showed in the notebooks, each system in a separate notebook.
+Scripts for generating the data can be found in ./data folder. The experiments are shown in the notebooks, each system in a separate notebook.
